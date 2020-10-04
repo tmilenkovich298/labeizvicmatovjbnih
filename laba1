@@ -1,0 +1,62 @@
+#include <iostream>
+
+using namespace std;
+
+main()
+{
+gamma0 = 5./3.;
+rho0 = 1.694*1E-4;
+U0 = 0;
+P0 = 1.013*1E6;
+gamma3 = 7./5.;
+C3 = 3.6537*1E4;
+U3 = 1.229*1E4;
+P3 = 1.6768*1E6;
+
+rho3 = gamma3*P3/(C3*C3);
+n = 2*gamma3/(gamma3 - 1);
+alfa0 = (gamma0 + 1)/(gamma0 - 1);
+mu = (U3 - U0)*sqrt((gamma0 - 1)*rho0/(2*P0));
+nu = (2.0/(gamma3 - 1.0))*sqrt(gamma3*(gamma0 - 1.0)*P3*rho0/(2*P0*rho3));
+X = P3/P0;
+
+a[0] = X*X;
+a[n-2] = (-1)*alfa0*nu*nu*X;
+a[n-1] = 2*alfa0*nu*(mu+nu)*X;
+a[n] = (-1)*(2.0+(mu+nu)*(mu+nu)*alfa0)*X;
+a[2*n-2] = (-1)*nu*nu;
+a[2*n-1] = 2*nu*(nu+mu);
+a[2*n] = (-1)*(mu+nu)*(mu+nu)+1.0;
+
+
+Nloc = 100;
+len = (top-bot)/Nloc;
+x_cur = bot;
+n_rt = 0;
+while (x_cur < top)
+{ val_a = func(x_cur, n, a);
+loc[n_rt][0] = x_cur;
+loc[n_rt][1] = x_cur + len;
+cout << "["<<loc[n_rt][0]<<";"<<loc[n_rt][1]<< "]"<<endl;
+n_rt++;
+}
+x_cur = x_cur+len;
+}
+
+pres = 1E-5;
+for (int ir=0; ir<n_rt; ir++);
+{
+left = loc[ir][0];
+right = loc[ir][1];
+while ((right-left)>pres)
+{center = 0.5*(left+right);
+val_a = func(left,n,a);
+val_b = func(center,n,a);
+if (val_a*val_b<0)
+right=center;
+else
+left=center;
+}
+roots[ir]=left;
+cout<<left<<endl;
+}
